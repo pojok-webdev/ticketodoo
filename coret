@@ -1,0 +1,1 @@
+select b.id,b.name,b.description from qiscus.categories_clients a  left outer join qiscus.messagecategories b on b.id=a.category_id where client_id=49;
