@@ -1,0 +1,61 @@
+subrootcausetop5
+http://localhost:2000/showreport/subrootcausetop5/rptType/ticketstart/ticketend/branches/numtoshow/category_id
+
+http://localhost:2000/rsubrootcausetop5/2023-01-01/2023-01-10/1-2-3-4/All/11
+
+mainrootcausetop5
+http://localhost:2000/rmainrootcausetop5/rptType/ticketstart/ticketend/branches
+http://localhost:2000/rmainrootcausetop5/2023-01-01/2023-01-10/1-2-3-4
+
+http://localhost:2000/rshiftreport/2023-01-01/2023-01-10/1-2-3-4
+
+http://localhost:2000/rtiketperiodik/2023-01-01/2023-01-10/1-2-3-4/11-12-13-14
+
+http://localhost:2000/rkategorikomplain/2023-01-01/2023-01-10/1-2-3-4/11-12-13-14
+
+http://localhost:2000/rticketbyidpelanggan/1
+
+http://localhost:2000/rdowntime/1-2-3-4
+
+
+http://localhost:2000/rticketterselesaikan/2023-01-01/2023-01-10/1-2-3-4/11-12-13-14 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+select * from (select a.id,a.kdticket,a.create_date,a.ticketstart,a.ticketend,a.createuser,a.status,a.cause, case a.status when '0' then 'open' when '1' then 'close' end ticketStatus,case a.status when '0' then '-' when '1' then ticketend end ticket_End,a.clientname,a.reporterphone,a.requesttype,a.parentid,b.id cid,c.id backboneid,d.id btsid,e.id dcid,f.id ptpid,reporter,i.trid,case when j.hastroubleshoot is null then '0' else j.hastroubleshoot end hastroubleshoot,l.id mainrootcauseid,l.name mainrootcause,case when b.id is not null then b.brnid when c.id is not null then c.brnid when d.id is not null then d.brnid when e.id is not null then e.brnid when f.id is not null then f.brnid when g.id is not null then g.brnid when h.id is not null then h.brnid else '-' end brnid, case when b.id is not null then b.brn when c.id is not null then c.brn when d.id is not null then d.brn when e.id is not null then e.brn when f.id is not null then f.brn when g.id is not null then g.brn when h.id is not null then h.brn else '-' end brn, case when ticketend is null then datediff(now(),ticketstart) when ticketend='0000-00-00 00:00:00' then datediff(now(),ticketstart) else datediff(ticketend,ticketstart) end hari ,concat(case when ticketend is null then datediff(now(),ticketstart) when ticketend='0000-00-00 00:00:00' then datediff(now(),ticketstart) else datediff(ticketend,ticketstart) end,' hari ',time_format(case when ticketend is null then timediff(now(),ticketstart) when ticketend='0000-00-00 00:00:00' then timediff(now(),ticketstart) else timediff(ticketend,ticketstart) end,'%H') % 24, time_format(case when ticketend is null then timediff(now(),ticketstart) when ticketend='0000-00-00 00:00:00' then timediff(now(),ticketstart) else timediff(ticketend,ticketstart) end,' jam %i menit %s detik')) duration3 from (select * from tickets where status='1' and ticketend>'2022-01-01' and ticketend<'2023-01-10' ) a left outer join ( select distinct a.id,c.id brnid,c.name brn from client_sites a left outer join clients b on b.id=a.client_id left outer join branches c on c.id=b.branch_id ) b on b.id=a.client_site_id left outer join ( select distinct a.id,c.id brnid,c.name brn from backbones a left outer join backbones_branches b on b.backbone_id=a.id left outer join branches c on c.id=b.branch_id ) c on c.id=a.backbone_id left outer join ( select distinct a.id,b.id brnid,b.name brn from btstowers a left outer join branches b on b.id=a.branch_id ) d on d.id=a.btstower_id left outer join ( select distinct a.id,b.id brnid,b.name brn from datacenters a left outer join branches b on b.id=a.branch_id ) e on e.id=a.datacenter_id left outer join ( select distinct a.id,b.id brnid,b.name brn from ptps a left outer join branches b on b.id=a.branch_id ) f on f.id=a.ptp_id left outer join ( select distinct a.id,b.id brnid,b.name brn from cores a left outer join branches b on b.id=a.branch_id ) g on g.id=a.core_id left outer join ( select distinct a.id,c.id brnid,c.name brn from aps a left outer join btstowers b on b.id=a.btstower_id left outer join branches c on c.id=b.branch_id ) h on h.id=a.ap_id left outer join (select id trid,ticket_id from troubleshoot_requests where status='0') i on i.ticket_id=a.id left outer join (select count(id) hastroubleshoot,ticket_id from troubleshoot_requests group by ticket_id) j on j.ticket_id=a.id left outer join ticketcauses k on k.id=a.cause_id left outer join ticketcausecategories l on l.id=k.category_id where b.id is not null or c.id is not null or d.id is not null or e.id is not null or f.id is not null or g.id is not null or h.id is not null )q where brnid in (1,2,3,4)
+
+
+
+        rptType:params.rptType,
+        ticketstart:'2023-01-01',ticketend:'2023-01-10',
+        branches:['1','2','3','4'],
+        numtoshow:5,category_id:1
+List Categories:
+|  1 | Backbone             | 0       | Backbone        | 0      | 2019-07-17 09:37:21 |
+|  2 | BTS                  | 0       | BTS             | 0      | 2019-07-17 09:37:30 |
+|  3 | Lastmile PadiNET     | 0       | Lastmile        | 0      | 2019-07-17 09:37:45 |
+|  4 | Local Pelanggan      | 0       | Local Pelanggan | 0      | 2019-07-17 09:37:57 |
+|  5 | Layanan              | 0       | Layanan         | 0      | 2019-07-17 09:38:20 |
+|  6 | Request              | 0       | Request         | 0      | 2019-07-17 09:38:38 |
+|  7 | Billing              | 0       | Billing         | 0      | 2019-07-17 09:38:52 |
+|  8 | Lastmile Vendor      | 0       | Vendor kita     | 0      | 2019-12-16 14:20:15 |
+|  9 | Lain-lain            | 0       | Lain-lain       | 0      | 2019-07-17 09:39:21 |
+| 10 | No Action            | 0       | No Action       | 0      | 2019-07-17 09:39:06 |
+| 11 | -CORE-               | 1       | NULL            | 1      | 2020-08-31 11:20:24 |
+| 12 | -BTS-                | 1       | NULL            | 1      | 2020-08-31 11:20:24 |
+| 13 | -Lastmile-           | 1       | NULL            | 1      | 2020-08-31 11:20:24 |
+| 14 | -Local Pelanggan-    | 1       | NULL            | 1      | 2020-08-31 11:20:24 |
+| 15 | -Non Teknis Padinet- | 1       | NULL            | 1      | 2020-08-31 11:20:25 |
